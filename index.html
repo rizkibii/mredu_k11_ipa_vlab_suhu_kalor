@@ -1,131 +1,78 @@
-<!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | Fluida Statis</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="stylesheet" href="TemplateData/style.css">
-  </head>
-  <body>
-    <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
-        </div>
-      </div>
-      <div id="unity-warning"> </div>
-      <div id="unity-footer">
-        <div id="unity-webgl-logo"></div>
-        <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">Fluida Statis</div>
-      </div>
-    </div>
-    <script>
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-      var container = document.querySelector("#unity-container");
-      var canvas = document.querySelector("#unity-canvas");
-      var loadingBar = document.querySelector("#unity-loading-bar");
-      var progressBarFull = document.querySelector("#unity-progress-bar-full");
-      var fullscreenButton = document.querySelector("#unity-fullscreen-button");
-      var warningBanner = document.querySelector("#unity-warning");
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt" xml:lang="pt">
+	<head>
+		<title>vlab_suhu_kalor</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<style type="text/css" media="screen">
 
-      // Shows a temporary message banner/ribbon for a few seconds, or
-      // a permanent error message on top of the canvas if type=='error'.
-      // If type=='warning', a yellow highlight color is used.
-      // Modify or remove this function to customize the visually presented
-      // way that non-critical warnings and error messages are presented to the
-      // user.
-      function unityShowBanner(msg, type) {
-        function updateBannerVisibility() {
-          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
-        }
-        var div = document.createElement('div');
-        div.innerHTML = msg;
-        warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
-        else {
-          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-          setTimeout(function() {
-            warningBanner.removeChild(div);
-            updateBannerVisibility();
-          }, 5000);
-        }
-        updateBannerVisibility();
-      }
+		html, body { height:100%; background-color: #ffffff; leftmargin="0"; topmargin="0"; marginwidth="0"; marginheight="0"; }
 
-      var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/WebGL.loader.js";
-      var config = {
-        dataUrl: buildUrl + "/WebGL.data",
-        frameworkUrl: buildUrl + "/WebGL.framework.js",
-        codeUrl: buildUrl + "/WebGL.wasm",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "Mrflash",
-        productName: "Fluida Statis",
-        productVersion: "1.0.2",
-        showBanner: unityShowBanner,
-      };
+		:root {
+ 		--preloader-background: #FFFFFF;
+		--logo-display: block;
 
-      // By default, Unity keeps WebGL canvas render target size matched with
-      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
-      // Set this to false if you want to decouple this synchronization from
-      // happening inside the engine, and you would instead like to size up
-      // the canvas DOM size and WebGL render target sizes yourself.
-      // config.matchWebGLToCanvasSize = false;
+		      }
 
-      // If you would like all file writes inside Unity Application.persistentDataPath
-      // directory to automatically persist so that the contents are remembered when
-      // the user revisits the site the next time, uncomment the following line:
-      // config.autoSyncPersistentDataPath = true;
-      // This autosyncing is currently not the default behavior to avoid regressing
-      // existing user projects that might rely on the earlier manual
-      // JS_FileSystem_Sync() behavior, but in future Unity version, this will be
-      // expected to change.
+body { margin:0; padding:0; overflow:hidden; }
+		#flashContent { width:100%; height:100%; }
 
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Mobile device style: fill the whole browser client area with the game canvas:
+		</style>
 
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
-        container.className = "unity-mobile";
-        canvas.className = "unity-mobile";
+<!--[Start my Ruffle]>-->
 
-        // To lower canvas resolution on mobile devices to gain some
-        // performance, uncomment the following line:
-        // config.devicePixelRatio = 1;
+		<script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+<script>
+		window.RufflePlayer = window.RufflePlayer || {};
+		window.RufflePlayer.config = {
+		// Options affecting files only
+		"autoplay": "on",
+		"letterbox": "on",
+		"unmuteOverlay": "hidden",
+		"warnOnUnsupportedContent": false,
+		"contextMenu": false,
+		"upgradeToHttps": window.location.protocol === "https:",
+		};
+</script>
 
+<!--[End my Ruffle]>-->
 
-      } else {
-        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-
-        canvas.style.width = "960px";
-        canvas.style.height = "600px";
-      }
-
-      loadingBar.style.display = "block";
-
-      var script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          progressBarFull.style.width = 100 * progress + "%";
-              }).then((unityInstance) => {
-                loadingBar.style.display = "none";
-                fullscreenButton.onclick = () => {
-                  unityInstance.SetFullscreen(1);
-                };
-              }).catch((message) => {
-                alert(message);
-              });
-            };
-
-      document.body.appendChild(script);
-
-    </script>
-  </body>
+	</head>
+	<body>
+		<div id="flashContent">
+			<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="100%%" height="100%%" id="vlab_suhu_kalor" align="middle">
+				<param name="movie" value="vlab_suhu_kalor.swf" />
+				<param name="quality" value="high" />
+				<param name="bgcolor" value="#ffffff" />
+				<param name="play" value="true" />
+				<param name="loop" value="true" />
+				<param name="wmode" value="window" />
+				<param name="scale" value="showall" />
+				<param name="menu" value="true" />
+				<param name="devicefont" value="false" />
+				<param name="salign" value="" />
+				<param name="allowScriptAccess" value="sameDomain" />
+				<!--[if !IE]>-->
+				<object type="application/x-shockwave-flash" data="vlab_suhu_kalor.swf" width="100%%" height="100%%">
+					<param name="movie" value="vlab_suhu_kalor.swf" />
+					<param name="quality" value="high" />
+					<param name="bgcolor" value="#ffffff" />
+					<param name="play" value="true" />
+					<param name="loop" value="true" />
+					<param name="wmode" value="window" />
+					<param name="scale" value="showall" />
+					<param name="menu" value="true" />
+					<param name="devicefont" value="false" />
+					<param name="salign" value="" />
+					<param name="allowScriptAccess" value="sameDomain" />
+				<!--<![endif]-->
+					<a href="http://www.adobe.com/go/getflash">
+						<img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Obter Adobe Flash Player" />
+					</a>
+				<!--[if !IE]>-->
+				</object>
+				<!--<![endif]-->
+			</object>
+		</div>
+	</body>
 </html>
